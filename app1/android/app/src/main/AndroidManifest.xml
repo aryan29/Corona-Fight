@@ -15,29 +15,28 @@
         android:label="app1"
         android:icon="@mipmap/ic_launcher">
         <service
-    android:name="io.flutter.plugins.androidalarmmanager.AlarmService"
-    android:permission="android.permission.BIND_JOB_SERVICE"
-    android:exported="false"/>
-<receiver
-    android:name="io.flutter.plugins.androidalarmmanager.AlarmBroadcastReceiver"
-    android:exported="false"/>
-<receiver
-    android:name="io.flutter.plugins.androidalarmmanager.RebootBroadcastReceiver"
-    android:enabled="true" android:exported="true">
-    <intent-filter>
-        <action android:name="android.intent.action.BOOT_COMPLETED"></action>
-        <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
-        <action android:name="android.intent.action.QUICKBOOT_POWERON"></action>
-
-    </intent-filter>
-</receiver>
-<receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
-    <intent-filter>
-        <action android:name="android.intent.action.BOOT_COMPLETED"></action>
-        <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
-        <action android:name="android.intent.action.QUICKBOOT_POWERON"></action>
-    </intent-filter>
-</receiver>
+        android:name="io.flutter.plugins.androidalarmmanager.AlarmService"
+        android:permission="android.permission.BIND_JOB_SERVICE"
+        android:exported="false"/>
+        <receiver
+        android:name="io.flutter.plugins.androidalarmmanager.AlarmBroadcastReceiver"
+        android:exported="false"/>
+        <receiver
+        android:name="io.flutter.plugins.androidalarmmanager.RebootBroadcastReceiver"
+        android:enabled="true" android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+            <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            <action android:name="android.intent.action.QUICKBOOT_POWERON"></action>
+        </intent-filter>
+        </receiver>
+        <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+        <intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+            <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            <action android:name="android.intent.action.QUICKBOOT_POWERON"></action>
+        </intent-filter>
+        </receiver>
 
         <activity
             android:name=".MainActivity"

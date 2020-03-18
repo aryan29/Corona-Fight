@@ -5,16 +5,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart' as loc;
 
 getpos() async {
-  try {
     Position position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     print("${position.accuracy} ${position.latitude} ${position.longitude}");
-  } catch (e) {
-    var location = new loc.Location();
-    var cl = await location.getLocation();
-    print(cl.latitude);
-    print(cl.longitude);
-  }
+
 }
 
 printHello() async {
@@ -23,7 +17,7 @@ printHello() async {
   var response =
       await http.post(url, body: {'name': 'doodle', 'color': 'blue'});
   print('Response status: ${response.statusCode}');
-  print('Response body: ${response.body}');
+  // print('Response body: ${response.body}');
 }
 
 Future<void> sendphoto() {

@@ -1,22 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:http/http.dart' as http;
-import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart' as loc;
+import 'package:geolocator/geolocator.dart';
 
-getpos() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    print("${position.accuracy} ${position.latitude} ${position.longitude}");
-
+Future<dynamic> getpos() async {
+  print("It is working or not");
+  try {
+    var locc = loc.Location();
+    var x = await locc.getLocation();
+    print(x.latitude);
+  } catch (e) {
+    print(e);
+  }
+  // print(cl.longitude);
 }
 
-printHello() async {
-  getpos();
-  var url = 'http://192.168.0.107:5000/';
-  var response =
-      await http.post(url, body: {'name': 'doodle', 'color': 'blue'});
-  print('Response status: ${response.statusCode}');
+Future<dynamic> printHello() async {
+  try {
+    //Checking connection to server
+    var x = await getpos();
+    // var url = 'http://192.168.0.107:5000/';
+    // var response =
+    //     await http.post(url, body: {'name': 'doodle', 'color': 'blue'});
+    // print('Response status: ${response.statusCode}');
+  } catch (e) {
+    print("Error occuring again and again");
+  }
   // print('Response body: ${response.body}');
 }
 
@@ -24,11 +34,16 @@ Future<void> sendphoto() {
 //Seding Photo to server
 }
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await AndroidAlarmManager.initialize();
-  runApp(MyApp());
-  await AndroidAlarmManager.periodic(const Duration(minutes: 1), 1, printHello);
+Future<dynamic> main() async {
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    // await AndroidAlarmManager.initialize();
+    runApp(MyApp());
+    // await AndroidAlarmManager.periodic(
+    //     const Duration(minutes: 1), 1, printHello);
+  } catch (e) {
+    print("Error Occuring at place 2");
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -107,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () => getpos(),
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.

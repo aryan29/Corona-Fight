@@ -11,6 +11,11 @@
 # in Mobile Application
 
 from flask import Flask, request, redirect, render_template
+import requests
+from pymongo import MongoClient
+import urllib.parse
+import datetime
+
 app = Flask(__name__)
 
 
@@ -24,11 +29,71 @@ def getloc():
         return 'Wrong Function Called'
 
 
-def ifout(lat, lon):
-    # Init lat1 and lon1
+def ifout(lat, lon, username):
+    print(lat, lon)
+    lat1, lon1 = Databse.getlastlocation(username)
     # Get Person Correntine Lat and Lon
-    # If diff is upto some lvl then take action and add to his dishonor points
+    # If diff is upto some lvl then take action and add to his disgrace points
 
 
-if(__name__ == "__main__"):
-    app.run(host="0.0.0.0", debug=True, port=5000)
+def matchface():
+    r = requests.post(
+        "https://api.deepai.org/api/image-similarity",
+        files={
+            'image1': open('1.jpg', 'rb'),
+            'image2': open('5.jpg', 'rb'),
+        },
+        headers={'api-key': 'd66a904a-3ff3-4f45-adea-231580cb521f'}
+    )
+    print(r.json())
+    # Get User Current Pic as Well as His Pic from Database and send it to be checked by server
+
+
+class Databse:
+    """
+    Contains all Mongo DB Atlas functions Add all of them here
+    """
+
+    def mongoexampleconn():
+        client = MongoClient(
+            f"mongodb+srv://aryan290:29062000@cluster0-2plut.mongodb.net/test?retryWrites=true&w=majority")
+        db = client.test
+        people = db.test
+        personDocument = {
+            "name": "aryan22",
+            "password": "kuchbhi99",
+            "last-lat": "something",
+            "last-lon": "something",
+            "last_update": "something",
+            "disgrace": 0,
+
+        }
+        # people.insert_one(personDocument)
+        people.update_one({"name": "aryan2"}, {
+            "$set": {"password": "change ho jayega"}})
+        for x in (people.find({})):
+            print(x)
+
+    def getlastlocation(self, username):
+        client = MongoClient(
+            f"mongodb+srv://aryan290:29062000@cluster0-2plut.mongodb.net/test?retryWrites=true&w=majority")
+        db = client.test
+        people = db.test
+        x = people.find_one({"name": username})
+        lat = x['last-lat']
+        lon = x['last-lon']
+        return lat, lon
+
+    def update_disgrace_points(self, username, val):
+        client = MongoClient(
+            f"mongodb+srv://aryan290:29062000@cluster0-2plut.mongodb.net/test?retryWrites=true&w=majority")
+        db = client.test
+        people = db.test
+        people.update_one({"name": username}, {
+            "$inc": {"quantity": val}})
+
+
+# if (__name__ == "__main__"):
+Databse().update_disgrace_points('aryan', 1)
+
+# app.run(host="0.0.0.0", debug=True, port=5000)

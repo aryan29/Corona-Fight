@@ -12,6 +12,7 @@
 
 from flask import Flask, request, redirect, render_template
 import requests
+import json
 from pymongo import MongoClient
 import urllib.parse
 import datetime
@@ -37,16 +38,32 @@ def ifout(lat, lon, username):
 
 
 def matchface():
+    # Not Working good change if possible
     r = requests.post(
         "https://api.deepai.org/api/image-similarity",
         files={
             'image1': open('1.jpg', 'rb'),
-            'image2': open('5.jpg', 'rb'),
+            'image2': open('4.jpg', 'rb'),
         },
         headers={'api-key': 'd66a904a-3ff3-4f45-adea-231580cb521f'}
     )
     print(r.json())
     # Get User Current Pic as Well as His Pic from Database and send it to be checked by server
+
+
+def sendmsg(msg):
+    URL = 'https://www.sms4india.com/api/v1/sendCampaign'
+    req_params = {
+        'apikey': 'UIYAW70XJQAXSTBBBZQCRVLIZDJM3PM7',
+        'secret': '08XJFGHFCQHBY88D',
+        'phone': '7906224093',
+        'usetype': 'stage',
+        'message': msg,
+        'senderid': 'SMSIND'
+    }
+    res = requests.post(URL, req_params)
+    print(res.status_code)
+    print(res.text)
 
 
 class Databse:
@@ -94,6 +111,6 @@ class Databse:
 
 
 # if (__name__ == "__main__"):
-Databse().update_disgrace_points('aryan', 1)
+sendmsg("hello Buddy whats up")
 
 # app.run(host="0.0.0.0", debug=True, port=5000)

@@ -1,31 +1,50 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart' as loc;
+import 'package:google_api_availability/google_api_availability.dart';
 import 'package:geolocator/geolocator.dart';
 
-Future<dynamic> getpos() async {
-  print("It is working or not");
+String lat, lon;
+Future<String> getpos() async {
+  String _placeMark;
+  print("Coming to Location Marker1");
   try {
-    var locc = loc.Location();
-    var x = await locc.getLocation();
-    print(x.latitude);
+    Geolocator geoLocator = Geolocator()..forceAndroidLocationManager = true;
+    print(geoLocator
+      ..isLocationServiceEnabled().then((val) {
+        print(val);
+      }));
+    var _position = await geoLocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
+    print(_position.latitude);
+    print("Going from loca marker");
+    lat = "${_position.latitude}";
+    lon = "${_position.longitude}";
+    return _placeMark = "${_position.latitude}\n${_position.longitude}";
   } catch (e) {
-    print(e);
+    print("Some error is occuring");
   }
-  // print(cl.longitude);
 }
 
 Future<dynamic> printHello() async {
   try {
-    //Checking connection to server
     var x = await getpos();
-    // var url = 'http://192.168.0.107:5000/';
-    // var response =
-    //     await http.post(url, body: {'name': 'doodle', 'color': 'blue'});
-    // print('Response status: ${response.statusCode}');
+    var url = 'http://192.168.0.107:5000/';
+    Map<String, String> data = {"lat": lat, "lon": lon};
+    var body = jsonEncode(data);
+    var response = await http.post(url,
+        headers: {
+          "accept": "application/json",
+          "content-type": "application/json"
+        },
+        body: body);
+    print('Response status: ${response.statusCode}');
   } catch (e) {
     print("Error occuring again and again");
+    print(e);
   }
   // print('Response body: ${response.body}');
 }
@@ -34,13 +53,12 @@ Future<void> sendphoto() {
 //Seding Photo to server
 }
 
-Future<dynamic> main() async {
+void main() {
   try {
     WidgetsFlutterBinding.ensureInitialized();
-    // await AndroidAlarmManager.initialize();
+    AndroidAlarmManager.initialize();
     runApp(MyApp());
-    // await AndroidAlarmManager.periodic(
-    //     const Duration(minutes: 1), 1, printHello);
+    AndroidAlarmManager.periodic(const Duration(minutes: 1), 1, printHello);
   } catch (e) {
     print("Error Occuring at place 2");
   }

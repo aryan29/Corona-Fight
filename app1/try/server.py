@@ -39,6 +39,7 @@ def ifout(lat, lon, username):
 
 def matchface():
     # Not Working good change if possible
+    # AWS is best for purpose if we can make a account
     r = requests.post(
         "https://api.deepai.org/api/image-similarity",
         files={

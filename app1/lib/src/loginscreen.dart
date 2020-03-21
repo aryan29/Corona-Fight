@@ -1,8 +1,42 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 final myController_name = TextEditingController();
 final myController_pass = TextEditingController();
-class LoginScreen extends StatelessWidget {
+
+class LoginScreen extends StatefulWidget {
   static const routeName = '/login';
+
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  dologin(String a, String b) async {
+    Map<String, String> mp = {
+      "email": a,
+      "pass": b,
+    };
+    var body = jsonEncode(mp);
+    var res = await http.post("http://192.168.0.107:5000/login",
+        headers: {
+          "accept": "application/json",
+          "content-type": "application/json"
+        },
+        body: body);
+    print(res.statusCode);
+    Map<String, dynamic> fl;
+    fl = jsonDecode(res.body);
+    fl = fl["loggedin"];
+    if (fl == 1) {
+      print("Logged in Successfully");
+      //Dispay You are Successfully Registered
+    } else {
+      print("Not Logged in Successfully");
+      //You are not registered successfully
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +72,7 @@ class LoginScreen extends StatelessWidget {
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
-                hintText: 'Username',
+                hintText: 'Email',
                 contentPadding: const EdgeInsets.all(15),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.white),
@@ -76,29 +110,22 @@ class LoginScreen extends StatelessWidget {
               height: 20,
             ),
             FlatButton(
-              child: Text(
-                'Login',
-                style: TextStyle(
-                  fontSize: 20,
+                child: Text(
+                  'Login',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
                 ),
-              ),
-              shape: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white, width: 2),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              padding: const EdgeInsets.all(15),
-              textColor: Colors.white,
-              onPressed: (){
-                    return showDialog(
-                  context: context,
-                    builder: (context) {
-            return AlertDialog(
-          content: Text(myController_name.text),
-        );
-      },
-    );
-              }
-            ),
+                shape: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white, width: 2),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                padding: const EdgeInsets.all(15),
+                textColor: Colors.white,
+                onPressed: () {
+                  return dologin(
+                      myController_name.text, myController_pass.text);
+                }),
           ],
         ),
       ),

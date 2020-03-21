@@ -60,7 +60,7 @@ void main() {
     WidgetsFlutterBinding.ensureInitialized();
     AndroidAlarmManager.initialize();
     runApp(MyApp());
-    AndroidAlarmManager.periodic(const Duration(minutes: 1), 1, printHello);
+    AndroidAlarmManager.periodic(const Duration(minutes: 160), 1, printHello);
   } catch (e) {
     print("Error Occuring at place 2");
   }

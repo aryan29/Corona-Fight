@@ -54,6 +54,7 @@ def getregister():
     face_enc = face_enc.tolist()
     # complete rest and register
     # name, password, email, phone, lat, lon, disgrace, face_enc
+    data1['disgrace'] = 0
     status = Auth().register(data1['name'],
                              data1['password'],
                              data1['email'],
@@ -66,6 +67,16 @@ def getregister():
         return jsonify({"registered": 1})
     else:
         return jsonify({"registered": 0})
+
+
+@app.route('/login', methods=['POST'])
+def getlogin():
+    data1 = request.json
+    status = Auth().login(data1["name"], data1["pass"])
+    if (status == 1):
+        return jsonify({"loggedin": 1})
+    else:
+        return jsonify({"loggedin": 0})
 
 
 def ifout(elat, elon, username):
@@ -156,8 +167,11 @@ class Auth:
         x = people.find_one({"email": email, "password": password})
         if(x == None):
             print("Login Unsuccesful")
+            return 0
         else:
             print("Login Successfull")
+            return 1
+
         # For logging in
 
     def check_if_already_exist(self, email, phone, database):

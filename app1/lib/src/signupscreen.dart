@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
 
 import 'package:flutter/material.dart';
 import 'dart:io';
@@ -35,13 +36,17 @@ class _SignupScreenState extends State<SignupScreen> {
       String e,
       String f) async {
     print("Coming to registering");
+    var _position = await Geolocator().getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
     Map<String, dynamic> mp = {
-      "number": a,
+      "phone": a,
       "email": b,
       "name": c,
-      "pass": d,
-      "cpass": e,
-      "b64img": f
+      "password": d,
+      "cpassword": e,
+      "b64img": f,
+      "lat":"${_position.latitude}",
+      "lon":"${_position.longitude}"
     };
     var body = jsonEncode(mp);
     var res = await http.post("http://192.168.0.107:5000/register",
@@ -51,6 +56,16 @@ class _SignupScreenState extends State<SignupScreen> {
         },
         body: body);
     print(res.statusCode);
+    Map<String, dynamic> fl;
+    fl = jsonDecode(res.body);
+    fl = fl["registered"];
+    if (fl == 1) {
+      print("Registered");
+      //Dispay You are Successfully Registered
+    } else {
+      print("Not registered");
+      //You are not registered successfully
+    }
   }
 
   @override

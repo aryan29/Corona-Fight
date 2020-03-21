@@ -35,41 +35,27 @@ def getloc():
         return 'Wrong Function Called'
 
 
-<<<<<<< HEAD
-@app.route('/register', methods=['GET', 'POST'])
-def getregister():
-    if (request.method == 'POST'):
-        data1 = request.json
-        print(data1)
-        image = base64.b64decode(data1['b64img'])
-        return "Reponse Received"
-
-
-def ifout(lat, lon, username):
-    print(lat, lon)
-    lat1, lon1 = Databse.getlastlocation(username)
-=======
 @app.route('/heatmap', methods=['GET'])
 def heatmap():
     return render_template("file.html")
 
 
 @app.route('/register', methods=['POST'])
-def reg():
-    face_file = request.files['image']
+def getregister():
+    data1 = request.json
+    face_file = base64.b64decode(data1['b64img'])
     face_file = face_recognition.load_image_file(face_file)
     face_enc = face_recognition.face_encodings(face_file)[0]
     face_enc = face_enc.tolist()
     # complete rest and register
     # name, password, email, phone, lat, lon, disgrace, face_enc
-    data = request.form.to_dict()
-    status = Auth().register(data['name'],
-                             data['password'],
-                             data['email'],
-                             data['phone'],
-                             data['lat'],
-                             data['lon'],
-                             data['disgrace'],
+    status = Auth().register(data1['name'],
+                             data1['password'],
+                             data1['email'],
+                             data1['phone'],
+                             data1['lat'],
+                             data1['lon'],
+                             data1['disgrace'],
                              face_enc)
     if (status == 1):
         return jsonify({"registered": 1})
@@ -83,7 +69,6 @@ def ifout(elat, elon, username):
     dist = 6371010 * acos(sin(slat)*sin(elat) + cos(slat)*cos(elat)*cos(slon - elon))
     if (dist > 50.0):
         Databse().update_disgrace_points(username, 1)
->>>>>>> b817a1c0063b9940682b2f73981848ce00e35352
 
         # Get Person Correntine Lat and Lon
         # If diff is upto some lvl then take action and add to his disgrace points
@@ -235,15 +220,7 @@ class Databse:
             "$inc": {"quantity": val}})
 
 
-<<<<<<< HEAD
 if (__name__ == "__main__"):
     #Auth().register("Aryan", "900", "hello12489@gmail.com", "900800", "81", "63", "0")
     # Auth().login("hello@gmail.com", "9900")
     app.run(host="0.0.0.0", debug=True, port=5000)
-=======
-# if (__name__ == "__main__"):
-Auth().register("Aryan", "900", "hello12489@gmail.com", "900800", "81", "63", "0", "0")
-# Auth().login("hello@gmail.com", "9900")
-
-# app.run(host="0.0.0.0", debug=True, port=5000)
->>>>>>> b817a1c0063b9940682b2f73981848ce00e35352

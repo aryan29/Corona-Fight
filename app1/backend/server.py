@@ -47,7 +47,10 @@ def getregister():
     face_file = base64.b64decode(data1['b64img'])
     face_file = BytesIO(face_file)
     face_file = face_recognition.load_image_file(face_file)
-    face_enc = face_recognition.face_encodings(face_file)[0]
+    try:
+        face_enc = face_recognition.face_encodings(face_file)[0]
+    except:
+        return jsonify({"registered": 0})
     face_enc = face_enc.tolist()
     # complete rest and register
     # name, password, email, phone, lat, lon, disgrace, face_enc
@@ -68,7 +71,8 @@ def getregister():
 def ifout(elat, elon, username):
     print(elat, elon)
     slat, slon = Databse().getlastlocation(username)
-    dist = 6371010 * acos(sin(slat)*sin(elat) + cos(slat)*cos(elat)*cos(slon - elon))
+    dist = 6371010 * acos(sin(slat)*sin(elat) + cos(slat)
+                          * cos(elat)*cos(slon - elon))
     if (dist > 50.0):
         Databse().update_disgrace_points(username, 1)
 

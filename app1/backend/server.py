@@ -13,6 +13,7 @@
 from flask import Flask, request, redirect, render_template
 import requests
 import json
+import time
 from pymongo import MongoClient
 import urllib.parse
 import datetime
@@ -33,6 +34,7 @@ def getloc():
 def ifout(lat, lon, username):
     print(lat, lon)
     lat1, lon1 = Databse.getlastlocation(username)
+
     # Get Person Correntine Lat and Lon
     # If diff is upto some lvl then take action and add to his disgrace points
 
@@ -67,6 +69,57 @@ def sendmsg(msg):
     print(res.text)
 
 
+class Auth:
+    """Authenicate with the server"""
+
+    def register(self, name, password, email, phone, lat, lon, disgrace):
+        # Registering User
+        cred = {
+            "name": name,
+            "password": password,
+            "email": email,
+            "phone": phone,
+            "last-lat": lat,
+            "last-lon": lon,
+            "last_update": time.time(),
+            "disgrace": disgrace,
+
+        }
+        client = MongoClient(
+            f"mongodb+srv://aryan290:29062000@cluster0-2plut.mongodb.net/test?retryWrites=true&w=majority")
+        db = client.test
+        people = db.test
+        if (self.check_if_already_exist(email, phone, people) == 1):
+            people.insert_one(cred)
+            print("Registered Successfully")
+            return 1
+        else:
+            print("Not registered Successfully")
+            return 0
+
+    def login(self, email, password):
+        client = MongoClient(
+            f"mongodb+srv://aryan290:29062000@cluster0-2plut.mongodb.net/test?retryWrites=true&w=majority")
+        db = client.test
+        people = db.test
+        x = people.find_one({"email": email, "password": password})
+        if(x == None):
+            print("Login Unsuccesful")
+        else:
+            print("Login Successfull")
+        # For logging in
+
+    def check_if_already_exist(self, email, phone, database):
+        print(database.find({"email": email}))
+        print(database.find({"phone": phone}))
+        if (database.find_one({"email": email}) == None and database.find_one({"phone": phone}) == None):
+            print("Can be registered")
+            return 1
+        else:
+            print("EmailId or Password Already regustered")
+            return 0
+
+
 class Databse:
     """
     Contains all Mongo DB Atlas functions Add all of them here
@@ -83,6 +136,7 @@ class Databse:
             "last-lat": "something",
             "last-lon": "something",
             "last_update": "something",
+            "time": "",
             "disgrace": 0,
 
         }
@@ -112,6 +166,7 @@ class Databse:
 
 
 # if (__name__ == "__main__"):
-sendmsg("hello Buddy whats up")
+Auth().register("Aryan", "900", "hello12489@gmail.com", "900800", "81", "63", "0")
+# Auth().login("hello@gmail.com", "9900")
 
 # app.run(host="0.0.0.0", debug=True, port=5000)

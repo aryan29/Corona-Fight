@@ -21,6 +21,7 @@ import datetime
 from math import radians, sin, cos, acos
 import face_recognition
 import numpy as np
+from io import BytesIO
 
 app = Flask(__name__)
 
@@ -44,7 +45,7 @@ def heatmap():
 def getregister():
     data1 = request.json
     face_file = base64.b64decode(data1['b64img'])
-    face_file = bytes(face_file, 'utf-8')
+    face_file = BytesIO(face_file)
     face_file = face_recognition.load_image_file(face_file)
     face_enc = face_recognition.face_encodings(face_file)[0]
     face_enc = face_enc.tolist()

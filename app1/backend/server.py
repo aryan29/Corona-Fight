@@ -44,6 +44,7 @@ def heatmap():
 def getregister():
     data1 = request.json
     face_file = base64.b64decode(data1['b64img'])
+    face_file = bytes(face_file, 'utf-8')
     face_file = face_recognition.load_image_file(face_file)
     face_enc = face_recognition.face_encodings(face_file)[0]
     face_enc = face_enc.tolist()
@@ -224,3 +225,5 @@ if (__name__ == "__main__"):
     #Auth().register("Aryan", "900", "hello12489@gmail.com", "900800", "81", "63", "0")
     # Auth().login("hello@gmail.com", "9900")
     app.run(host="0.0.0.0", debug=True, port=5000)
+
+# Auth().register("Aryeasan", "927100", "hel2lasdo12489@gmail.com", "90990800", "821", "623", "02", "02")

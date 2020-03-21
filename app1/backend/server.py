@@ -17,6 +17,9 @@ import time
 from pymongo import MongoClient
 import urllib.parse
 import datetime
+from math import radians, sin, cos, acos
+import face_recognition
+import numpy as np
 
 app = Flask(__name__)
 
@@ -31,27 +34,44 @@ def getloc():
         return 'Wrong Function Called'
 
 
-def ifout(lat, lon, username):
-    print(lat, lon)
-    lat1, lon1 = Databse.getlastlocation(username)
-
-    # Get Person Correntine Lat and Lon
-    # If diff is upto some lvl then take action and add to his disgrace points
+@app.route('/heatmap', methods=['GET'])
+def heatmap():
+    return render_template("file.html")
 
 
-def matchface():
+def ifout(elat, elon, username):
+    print(elat, elon)
+    slat, slon = Databse().getlastlocation(username)
+    dist = 6371010 * acos(sin(slat)*sin(elat) + cos(slat)*cos(elat)*cos(slon - elon))
+    if (dist > 50.0):
+        Databse().update_disgrace_points(username, 1)
+
+        # Get Person Correntine Lat and Lon
+        # If diff is upto some lvl then take action and add to his disgrace points
+
+
+def matchface(username, cur_face_enc):
+    # returns np.bool
+    # username is string, cur_face_enc is np array
+    # face_enc is a np array
+    # save it in db using .tolist()
+    # extract it using np.fromiter(a,float)
+
     # Not Working good change if possible
     # AWS is best for purpose if we can make a account
-    r = requests.post(
-        "https://api.deepai.org/api/image-similarity",
-        files={
-            'image1': open('1.jpg', 'rb'),
-            'image2': open('4.jpg', 'rb'),
-        },
-        headers={'api-key': 'd66a904a-3ff3-4f45-adea-231580cb521f'}
-    )
-    print(r.json())
+    # r = requests.post(
+    #     "https://api.deepai.org/api/image-similarity",
+    #     files={
+    #         'image1': open('1.jpg', 'rb'),
+    #         'image2': open('4.jpg', 'rb'),
+    #     },
+    #     headers={'api-key': 'd66a904a-3ff3-4f45-adea-231580cb521f'}
+    # )
+    # print(r.json())
     # Get User Current Pic as Well as His Pic from Database and send it to be checked by server
+    face_enc = Databse().getfaceenc(username)
+    results = face_recognition.compare_faces([face_enc], cur_face_enc)
+    return results[0]
 
 
 def sendmsg(msg):
@@ -72,7 +92,7 @@ def sendmsg(msg):
 class Auth:
     """Authenicate with the server"""
 
-    def register(self, name, password, email, phone, lat, lon, disgrace):
+    def register(self, name, password, email, phone, lat, lon, disgrace, face_enc):
         # Registering User
         cred = {
             "name": name,
@@ -83,6 +103,7 @@ class Auth:
             "last-lon": lon,
             "last_update": time.time(),
             "disgrace": disgrace,
+            "face_enc": face_enc,
 
         }
         client = MongoClient(
@@ -125,7 +146,7 @@ class Databse:
     Contains all Mongo DB Atlas functions Add all of them here
     """
 
-    def mongoexampleconn():
+    def mongoexampleconn(self):
         client = MongoClient(
             f"mongodb+srv://aryan290:29062000@cluster0-2plut.mongodb.net/test?retryWrites=true&w=majority")
         db = client.test
@@ -156,6 +177,16 @@ class Databse:
         lon = x['last-lon']
         return lat, lon
 
+    def getfaceenc(self, username):
+        client = MongoClient(
+            f"mongodb+srv://aryan290:29062000@cluster0-2plut.mongodb.net/test?retryWrites=true&w=majority")
+        db = client.test
+        people = db.test
+        x = people.find_one({"name": username})
+        face_enc = x['face_enc']
+        face_enc = np.fromiter(face_enc, float)
+        return face_enc
+
     def update_disgrace_points(self, username, val):
         client = MongoClient(
             f"mongodb+srv://aryan290:29062000@cluster0-2plut.mongodb.net/test?retryWrites=true&w=majority")
@@ -166,7 +197,7 @@ class Databse:
 
 
 # if (__name__ == "__main__"):
-Auth().register("Aryan", "900", "hello12489@gmail.com", "900800", "81", "63", "0")
+Auth().register("Aryan", "900", "hello12489@gmail.com", "900800", "81", "63", "0", "0")
 # Auth().login("hello@gmail.com", "9900")
 
 # app.run(host="0.0.0.0", debug=True, port=5000)

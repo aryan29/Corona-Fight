@@ -33,6 +33,7 @@ def getloc():
 def ifout(lat, lon, username):
     print(lat, lon)
     lat1, lon1 = Databse.getlastlocation(username)
+
     # Get Person Correntine Lat and Lon
     # If diff is upto some lvl then take action and add to his disgrace points
 

@@ -26,6 +26,10 @@ class _InformState extends State<Inform> {
             FloatingActionButton(onPressed: (){
               //Request a Distress Signal After taking Readings of Temperature and Other Things
             },),
+            FloatingActionButton(onPressed: (){
+              //View Heat Map of Correntine Peoples
+              //Have to add a web view for a particular html file on our server
+            },),
           ],
           )
       )

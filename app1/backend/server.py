@@ -14,6 +14,7 @@ from flask import Flask, request, redirect, render_template
 import requests
 import json
 import time
+import base64
 from pymongo import MongoClient
 import urllib.parse
 import datetime
@@ -29,6 +30,15 @@ def getloc():
         return 'Response received'
     else:
         return 'Wrong Function Called'
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def getregister():
+    if (request.method == 'POST'):
+        data1 = request.json
+        print(data1)
+        image = base64.b64decode(data1['b64img'])
+        return "Reponse Received"
 
 
 def ifout(lat, lon, username):
@@ -165,8 +175,7 @@ class Databse:
             "$inc": {"quantity": val}})
 
 
-# if (__name__ == "__main__"):
-Auth().register("Aryan", "900", "hello12489@gmail.com", "900800", "81", "63", "0")
-# Auth().login("hello@gmail.com", "9900")
-
-# app.run(host="0.0.0.0", debug=True, port=5000)
+if (__name__ == "__main__"):
+    #Auth().register("Aryan", "900", "hello12489@gmail.com", "900800", "81", "63", "0")
+    # Auth().login("hello@gmail.com", "9900")
+    app.run(host="0.0.0.0", debug=True, port=5000)

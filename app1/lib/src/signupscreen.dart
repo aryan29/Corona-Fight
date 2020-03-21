@@ -1,9 +1,17 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
 final myController_number = TextEditingController();
 final myController_email = TextEditingController();
 final myController_name = TextEditingController();
 final myController_pass = TextEditingController();
 final myController_cpass = TextEditingController();
+String base64file = "int";
+
 class SignupScreen extends StatefulWidget {
   static const routeName = '/signup';
 
@@ -12,10 +20,37 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  Future<void> captureimage(ImageSource imageSource) async {
+    var image = await ImagePicker.pickImage(source: imageSource);
+    String b64enc = base64Encode(await image.readAsBytesSync());
+    base64file = b64enc;
+  }
 
-  void register_on_server(String a,String b,String c,String d,String e){
-    print("bfv");
-    //Do something with creadentials here and return a valid response according to that
+  void register_on_server(
+      //Do something with creadentials here and return a valid response according to that
+      String a,
+      String b,
+      String c,
+      String d,
+      String e,
+      String f) async {
+    print("Coming to registering");
+    Map<String, dynamic> mp = {
+      "number": a,
+      "email": b,
+      "name": c,
+      "pass": d,
+      "cpass": e,
+      "b64img": f
+    };
+    var body = jsonEncode(mp);
+    var res = await http.post("http://192.168.0.107:5000/register",
+        headers: {
+          "accept": "application/json",
+          "content-type": "application/json"
+        },
+        body: body);
+    print(res.statusCode);
   }
 
   @override
@@ -164,20 +199,44 @@ class _SignupScreenState extends State<SignupScreen> {
                       height: 20,
                     ),
                     FlatButton(
-                      child: Text(
-                        'Signup',
-                        style: TextStyle(
-                          fontSize: 20,
+                        child: Text(
+                          'Upload Your Image',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
                         ),
-                      ),
-                      shape: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white, width: 2),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      padding: const EdgeInsets.all(15),
-                      textColor: Colors.white,
-                      onPressed: ()=>register_on_server(myController_number.text,myController_email.text,myController_name.text,myController_pass.text,myController_cpass.text),
+                        shape: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white, width: 2),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        padding: const EdgeInsets.all(15),
+                        textColor: Colors.white,
+                        onPressed: () => captureimage(ImageSource.camera)),
+                    SizedBox(
+                      height: 20,
                     ),
+                    FlatButton(
+                        child: Text(
+                          'Signup',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                        shape: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white, width: 2),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        padding: const EdgeInsets.all(15),
+                        textColor: Colors.white,
+                        onPressed: () {
+                          return register_on_server(
+                              myController_number.text,
+                              myController_email.text,
+                              myController_name.text,
+                              myController_pass.text,
+                              myController_cpass.text,
+                              base64file);
+                        }),
                   ],
                 ),
               ),

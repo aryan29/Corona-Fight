@@ -49,7 +49,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     Image.asset(
-                      'assets/images/logo.png',
+                      'assets/images.jpeg',
                       height: 130,
                     ),
                     SizedBox(

@@ -10,7 +10,7 @@
 # We willbe  making use of mobile GPS and Google Map Api to get user Latitude and Longiude and Alarm Manager to get Location at continuous time
 # in Mobile Application
 
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, render_template, jsonify
 import requests
 import json
 import time
@@ -37,6 +37,29 @@ def getloc():
 @app.route('/heatmap', methods=['GET'])
 def heatmap():
     return render_template("file.html")
+
+
+@app.route('/register', methods=['POST'])
+def reg():
+    face_file = request.files['image']
+    face_file = face_recognition.load_image_file(face_file)
+    face_enc = face_recognition.face_encodings(face_file)[0]
+    face_enc = face_enc.tolist()
+    # complete rest and register
+    # name, password, email, phone, lat, lon, disgrace, face_enc
+    data = request.form.to_dict()
+    status = Auth().register(data['name'],
+                             data['password'],
+                             data['email'],
+                             data['phone'],
+                             data['lat'],
+                             data['lon'],
+                             data['disgrace'],
+                             face_enc)
+    if (status == 1):
+        return jsonify({"registered": 1})
+    else:
+        return jsonify({"registered": 0})
 
 
 def ifout(elat, elon, username):
